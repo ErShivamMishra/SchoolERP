@@ -1,0 +1,6 @@
+<Solution>
+  <Project Path="SchoolERP.API/SchoolERP.API.csproj" />
+  <Project Path="SchoolERP.Application/SchoolERP.Application.csproj" />
+  <Project Path="SchoolERP.Domain/SchoolERP.Domain.csproj" />
+  <Project Path="SchoolERP.Infrastructure/SchoolERP.Infrastructure.csproj" />
+</Solution>

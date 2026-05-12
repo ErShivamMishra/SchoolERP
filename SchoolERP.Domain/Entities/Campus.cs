@@ -1,0 +1,15 @@
+using SchoolERP.Domain.Common;
+
+namespace SchoolERP.Domain.Entities;
+
+public sealed class Campus : AuditableEntity
+{
+    public Guid TenantId { get; set; }
+    public string Name { get; set; } = string.Empty;
+    public string Code { get; set; } = string.Empty;
+    public string Address { get; set; } = string.Empty;
+    public string Contact { get; set; } = string.Empty;
+    public bool IsActive { get; set; } = true;
+
+    public School? Tenant { get; set; }
+}
