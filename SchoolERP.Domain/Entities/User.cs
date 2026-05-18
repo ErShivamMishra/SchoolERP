@@ -17,6 +17,7 @@ public sealed class User : AuditableEntity
     public string FullName { get; set; } = string.Empty;
     public string Email { get; set; } = string.Empty;
     public string NormalizedEmail { get; set; } = string.Empty;
+    public string PhoneNumber { get; set; } = string.Empty;
     public string PasswordHash { get; set; } = string.Empty;
     public Guid RoleId { get; set; }
     public bool IsActive { get; set; } = true;
@@ -44,5 +45,6 @@ public sealed class User : AuditableEntity
     public Campus? Campus { get; set; }
     public Role? Role { get; set; }
     public ICollection<UserRole> UserRoles { get; set; } = new List<UserRole>();
+    public ICollection<UserPermission> UserPermissions { get; set; } = new List<UserPermission>();
     public ICollection<RefreshToken> RefreshTokens { get; set; } = new List<RefreshToken>();
 }

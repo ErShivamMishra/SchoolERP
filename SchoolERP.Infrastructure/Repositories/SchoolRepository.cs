@@ -39,6 +39,21 @@ public sealed class SchoolRepository(SchoolErpDbContext dbContext) : ISchoolRepo
         return dbContext.Roles.AddAsync(role, cancellationToken).AsTask();
     }
 
+    public async Task<IReadOnlyCollection<Module>> GetModulesAsync(CancellationToken cancellationToken)
+    {
+        return await dbContext.Modules.Where(x => x.IsActive).ToListAsync(cancellationToken);
+    }
+
+    public async Task<IReadOnlyCollection<Permission>> GetPermissionsByModuleIdsAsync(IReadOnlyCollection<Guid> moduleIds, CancellationToken cancellationToken)
+    {
+        return await dbContext.Permissions.Where(x => moduleIds.Contains(x.ModuleId)).ToListAsync(cancellationToken);
+    }
+
+    public Task AddRolePermissionsAsync(IEnumerable<RolePermission> rolePermissions, CancellationToken cancellationToken)
+    {
+        return dbContext.RolePermissions.AddRangeAsync(rolePermissions, cancellationToken);
+    }
+
     public Task AddUserAsync(User user, CancellationToken cancellationToken)
     {
         return dbContext.Users.AddAsync(user, cancellationToken).AsTask();

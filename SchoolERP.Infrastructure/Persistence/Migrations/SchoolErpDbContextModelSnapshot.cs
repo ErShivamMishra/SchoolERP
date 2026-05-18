@@ -133,6 +133,12 @@ namespace SchoolERP.Infrastructure.Persistence.Migrations
                     b.Property<string>("CreatedBy")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("Description")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("DisplayOrder")
+                        .HasColumnType("int");
+
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
 
@@ -487,6 +493,7 @@ namespace SchoolERP.Infrastructure.Persistence.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<decimal>("Price")
+                        .HasPrecision(18, 2)
                         .HasColumnType("decimal(18,2)");
 
                     b.HasKey("Id");
@@ -552,6 +559,10 @@ namespace SchoolERP.Infrastructure.Persistence.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("PhoneNumber")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<bool>("RequiresPasswordReset")
                         .HasColumnType("bit");
 
@@ -572,6 +583,55 @@ namespace SchoolERP.Infrastructure.Persistence.Migrations
                         .HasFilter("[TenantId] IS NOT NULL");
 
                     b.ToTable("Users");
+                });
+
+            modelBuilder.Entity("SchoolERP.Domain.Entities.UserPermission", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<bool>("CanCreate")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("CanDelete")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("CanEdit")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("CanView")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime>("CreatedAtUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime?>("ModifiedAtUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("ModifiedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("ModuleId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ModuleId");
+
+                    b.HasIndex("UserId", "ModuleId")
+                        .IsUnique();
+
+                    b.ToTable("UserPermissions");
                 });
 
             modelBuilder.Entity("SchoolERP.Domain.Entities.UserRole", b =>
@@ -713,6 +773,25 @@ namespace SchoolERP.Infrastructure.Persistence.Migrations
                     b.Navigation("Tenant");
                 });
 
+            modelBuilder.Entity("SchoolERP.Domain.Entities.UserPermission", b =>
+                {
+                    b.HasOne("SchoolERP.Domain.Entities.Module", "Module")
+                        .WithMany("UserPermissions")
+                        .HasForeignKey("ModuleId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("SchoolERP.Domain.Entities.User", "User")
+                        .WithMany("UserPermissions")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Module");
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("SchoolERP.Domain.Entities.UserRole", b =>
                 {
                     b.HasOne("SchoolERP.Domain.Entities.Role", "Role")
@@ -737,6 +816,8 @@ namespace SchoolERP.Infrastructure.Persistence.Migrations
                     b.Navigation("Permissions");
 
                     b.Navigation("PlanModuleEntitlements");
+
+                    b.Navigation("UserPermissions");
                 });
 
             modelBuilder.Entity("SchoolERP.Domain.Entities.Permission", b =>
@@ -772,6 +853,8 @@ namespace SchoolERP.Infrastructure.Persistence.Migrations
             modelBuilder.Entity("SchoolERP.Domain.Entities.User", b =>
                 {
                     b.Navigation("RefreshTokens");
+
+                    b.Navigation("UserPermissions");
 
                     b.Navigation("UserRoles");
                 });

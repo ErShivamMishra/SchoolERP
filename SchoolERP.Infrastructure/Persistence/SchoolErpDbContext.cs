@@ -23,6 +23,7 @@ public sealed class SchoolErpDbContext : DbContext, IUnitOfWork
     public DbSet<SchoolSubscription> SchoolSubscriptions => Set<SchoolSubscription>();
     public DbSet<SubscriptionPlan> SubscriptionPlans => Set<SubscriptionPlan>();
     public DbSet<User> Users => Set<User>();
+    public DbSet<UserPermission> UserPermissions => Set<UserPermission>();
     public DbSet<UserRole> UserRoles => Set<UserRole>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -36,7 +37,9 @@ public sealed class SchoolErpDbContext : DbContext, IUnitOfWork
         modelBuilder.Entity<Module>().HasIndex(x => x.Code).IsUnique();
         modelBuilder.Entity<Permission>().HasIndex(x => x.Code).IsUnique();
         modelBuilder.Entity<SubscriptionPlan>().HasIndex(x => x.Code).IsUnique();
+        modelBuilder.Entity<SubscriptionPlan>().Property(x => x.Price).HasPrecision(18, 2);
         modelBuilder.Entity<RefreshToken>().HasIndex(x => x.Token).IsUnique();
+        modelBuilder.Entity<UserPermission>().HasIndex(x => new { x.UserId, x.ModuleId }).IsUnique();
 
         modelBuilder.Entity<UserRole>().HasKey(x => new { x.UserId, x.RoleId });
         modelBuilder.Entity<RolePermission>().HasKey(x => new { x.RoleId, x.PermissionId });
@@ -51,6 +54,7 @@ public sealed class SchoolErpDbContext : DbContext, IUnitOfWork
         modelBuilder.Entity<SubscriptionPlan>().HasQueryFilter(x => !x.IsDeleted);
         modelBuilder.Entity<SchoolSubscription>().HasQueryFilter(x => !x.IsDeleted);
         modelBuilder.Entity<RefreshToken>().HasQueryFilter(x => !x.IsDeleted);
+        modelBuilder.Entity<UserPermission>().HasQueryFilter(x => !x.IsDeleted);
 
         modelBuilder.Entity<School>()
             .HasMany(x => x.Campuses)
@@ -129,6 +133,18 @@ public sealed class SchoolErpDbContext : DbContext, IUnitOfWork
             .WithOne(x => x.User)
             .HasForeignKey(x => x.UserId)
             .OnDelete(DeleteBehavior.Cascade);
+
+        modelBuilder.Entity<User>()
+            .HasMany(x => x.UserPermissions)
+            .WithOne(x => x.User)
+            .HasForeignKey(x => x.UserId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        modelBuilder.Entity<Module>()
+            .HasMany(x => x.UserPermissions)
+            .WithOne(x => x.Module)
+            .HasForeignKey(x => x.ModuleId)
+            .OnDelete(DeleteBehavior.Restrict);
 
         modelBuilder.Entity<AuditLog>()
             .HasOne(x => x.User)

@@ -49,6 +49,7 @@ public sealed class SchoolService(
 
         var schoolAdminRole = await EnsureTenantRoleAsync(school.Id, RoleNames.SchoolAdmin, cancellationToken);
         await EnsureTenantRoleAsync(school.Id, RoleNames.Staff, cancellationToken);
+        await EnsureDefaultRolePermissionsAsync(schoolAdminRole.Id, cancellationToken);
 
         var temporaryPassword = GenerateTemporaryPassword();
         var schoolAdminEmail = $"admin@{request.Code.Trim().ToLowerInvariant()}.schoolerp.local";
@@ -59,6 +60,7 @@ public sealed class SchoolService(
             FullName = $"{school.Name} Admin",
             Email = schoolAdminEmail,
             NormalizedEmail = schoolAdminEmail.ToUpperInvariant(),
+            PhoneNumber = school.ContactPhone,
             PasswordHash = passwordHasher.HashPassword(temporaryPassword),
             RoleId = schoolAdminRole.Id,
             IsActive = true,
@@ -206,6 +208,27 @@ public sealed class SchoolService(
     private static string GenerateTemporaryPassword()
     {
         return $"Temp@{Guid.NewGuid():N}"[..18];
+    }
+
+    private async Task EnsureDefaultRolePermissionsAsync(Guid schoolAdminRoleId, CancellationToken cancellationToken)
+    {
+        var modules = await schoolRepository.GetModulesAsync(cancellationToken);
+        if (modules.Count == 0)
+        {
+            return;
+        }
+
+        var permissions = await schoolRepository.GetPermissionsByModuleIdsAsync(modules.Select(x => x.Id).ToArray(), cancellationToken);
+        var rolePermissions = permissions.Select(permission => new RolePermission
+        {
+            RoleId = schoolAdminRoleId,
+            PermissionId = permission.Id
+        }).ToArray();
+
+        if (rolePermissions.Length > 0)
+        {
+            await schoolRepository.AddRolePermissionsAsync(rolePermissions, cancellationToken);
+        }
     }
 
     private static SchoolDto MapSchool(School school)

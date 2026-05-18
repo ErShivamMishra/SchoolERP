@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Authorization;
+using SchoolERP.API.Common.Authorization;
 using Microsoft.EntityFrameworkCore;
 using SchoolERP.API.Common.Responses;
 using SchoolERP.Application.Common.Interfaces;
@@ -22,7 +23,8 @@ public sealed class SubscriptionValidationMiddleware
     public async Task InvokeAsync(
         HttpContext context,
         SchoolErpDbContext dbContext,
-        ICurrentUserContext currentUserContext)
+        ICurrentUserContext currentUserContext,
+        IAccessControlService accessControlService)
     {
         if (!ShouldValidate(context))
         {
@@ -70,6 +72,12 @@ public sealed class SubscriptionValidationMiddleware
                 "The current school subscription has expired.");
 
             return;
+        }
+
+        var moduleRequirements = context.GetEndpoint()?.Metadata.GetOrderedMetadata<ModuleAccessAttribute>() ?? Array.Empty<ModuleAccessAttribute>();
+        foreach (var requirement in moduleRequirements)
+        {
+            await accessControlService.EnsureModuleAccessAsync(requirement.ModuleCode, requirement.PermissionAction, context.RequestAborted);
         }
 
         await _next(context);
