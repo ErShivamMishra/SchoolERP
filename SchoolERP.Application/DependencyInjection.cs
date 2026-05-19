@@ -11,6 +11,14 @@ using SchoolERP.Application.Features.Schools.Interfaces;
 using SchoolERP.Application.Features.Schools.Services;
 using SchoolERP.Application.Features.Staff.Interfaces;
 using SchoolERP.Application.Features.Staff.Services;
+using SchoolERP.Application.Features.Admissions.Interfaces;
+using SchoolERP.Application.Features.Admissions.Services;
+using SchoolERP.Application.Features.Students.Interfaces;
+using SchoolERP.Application.Features.Students.Services;
+using SchoolERP.Application.Features.Teachers.Interfaces;
+using SchoolERP.Application.Features.Teachers.Services;
+using SchoolERP.Application.Features.Study.Interfaces;
+using SchoolERP.Application.Features.Study.Services;
 using SchoolERP.Application.Features.Subscriptions.Interfaces;
 using SchoolERP.Application.Features.Subscriptions.Services;
 
@@ -27,6 +35,10 @@ public static class DependencyInjection
         services.AddScoped<IModuleService, ModuleService>();
         services.AddScoped<ISchoolService, SchoolService>();
         services.AddScoped<IStaffService, StaffService>();
+        services.AddScoped<IAdmissionService, AdmissionService>();
+        services.AddScoped<IStudentService, StudentService>();
+        services.AddScoped<ITeacherService, TeacherService>();
+        services.AddScoped<IStudyService, StudyService>();
         services.AddScoped<ISubscriptionPlanService, SubscriptionPlanService>();
 
         return services;

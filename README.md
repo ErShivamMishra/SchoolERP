@@ -89,6 +89,7 @@ Default seeded SuperAdmin:
 
 Seeded modules:
 
+- `AdmissionManagement`
 - `SchoolManagement`
 - `StaffManagement`
 - `StudentManagement`
@@ -125,7 +126,7 @@ Permission model:
 
 Current seed behavior:
 
-- `BASIC` licenses `StaffManagement`, `StudentManagement`, `TeacherManagement`, `AttendanceManagement`
+- `BASIC` licenses `AdmissionManagement`, `StaffManagement`, `StudentManagement`, `TeacherManagement`, `AttendanceManagement`, `StudyManagement`
 - `PREMIUM` licenses all seeded modules
 
 ## Existing and Implemented Modules
@@ -144,6 +145,15 @@ Day 2 APIs:
 - Module Management
 - Subscription plan creation and assignment
 
+Day 3 APIs:
+
+- Admission Management
+- Academic Session / Class / Section setup
+- Student Management
+- Teacher Management
+- Study Management
+- Tenant-organized file uploads for student documents, study materials, and homework attachments
+
 ## Module Organization
 
 - `Features/Authentication`
@@ -152,6 +162,10 @@ Day 2 APIs:
 - `Features/Modules`
 - `Features/AccessControl`
 - `Features/Subscriptions`
+- `Features/Admissions`
+- `Features/Students`
+- `Features/Teachers`
+- `Features/Study`
 
 Each feature contains:
 
@@ -166,6 +180,7 @@ Each feature contains:
 - `CurrentUserContext`: JWT-backed user/tenant context
 - `AccessControlService`: reusable module entitlement and permission evaluation
 - `AuditService`: audit logging for auth, school, staff, permission, and plan events
+- `LocalFileStorageService`: reusable tenant/module-aware file storage abstraction with local implementation
 
 ## Swagger Notes
 

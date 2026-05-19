@@ -2,6 +2,7 @@ namespace SchoolERP.Domain.Constants;
 
 public static class ModuleCodes
 {
+    public const string AdmissionManagement = "AdmissionManagement";
     public const string SchoolManagement = "SchoolManagement";
     public const string StaffManagement = "StaffManagement";
     public const string StudentManagement = "StudentManagement";
@@ -16,6 +17,7 @@ public static class ModuleCodes
 
     public static readonly IReadOnlyCollection<string> Seeded = new[]
     {
+        AdmissionManagement,
         SchoolManagement,
         StaffManagement,
         StudentManagement,

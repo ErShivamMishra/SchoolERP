@@ -34,6 +34,7 @@ public static class SchoolErpDbInitializer
     {
         var seedModules = new[]
         {
+            new { Name = "Admission Management", Code = ModuleCodes.AdmissionManagement, Description = "Admissions, approvals, and applicant intake.", DisplayOrder = 5 },
             new { Name = "School Management", Code = ModuleCodes.SchoolManagement, Description = "Platform school onboarding and lifecycle management.", DisplayOrder = 10 },
             new { Name = "Staff Management", Code = ModuleCodes.StaffManagement, Description = "Tenant staff administration and permissions.", DisplayOrder = 20 },
             new { Name = "Student Management", Code = ModuleCodes.StudentManagement, Description = "Student records and profiles.", DisplayOrder = 30 },
@@ -137,10 +138,12 @@ public static class SchoolErpDbInitializer
         {
             var basicCodes = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
             {
+                ModuleCodes.AdmissionManagement,
                 ModuleCodes.StaffManagement,
                 ModuleCodes.StudentManagement,
                 ModuleCodes.TeacherManagement,
-                ModuleCodes.AttendanceManagement
+                ModuleCodes.AttendanceManagement,
+                ModuleCodes.StudyManagement
             };
 
             await UpsertPlanEntitlementsAsync(dbContext, basicPlan.Id, modules, basicCodes, cancellationToken);

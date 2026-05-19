@@ -489,3 +489,268 @@ Cross-tenant example:
 - `SchoolAdmin` cannot create `SuperAdmin`
 - Tenant requests require both permission and plan entitlement
 - Existing auth token flow is unchanged
+
+## Day 3 APIs
+
+## Admission Management
+
+Module requirement:
+
+- `AdmissionManagement`
+
+### `POST /admissions/academic-sessions`
+
+- Auth: Yes
+- Purpose: create academic session
+
+### `GET /admissions/academic-sessions`
+
+- Auth: Yes
+- Purpose: list academic sessions for the tenant
+
+### `POST /admissions/classes`
+
+- Auth: Yes
+- Purpose: create class master
+
+### `GET /admissions/classes`
+
+- Auth: Yes
+- Purpose: list class masters
+
+### `POST /admissions/sections`
+
+- Auth: Yes
+- Purpose: create section under a class
+
+### `GET /admissions/sections`
+
+- Auth: Yes
+- Query:
+  - `schoolId` for `SuperAdmin`
+  - `classId` optional
+
+### `POST /admissions`
+
+- Auth: Yes
+- Purpose: create admission application
+- Validation:
+  - `admissionNumber` unique inside tenant
+  - duplicate mobile/email blocked inside tenant
+  - class and academic session must belong to the tenant
+
+### `PUT /admissions/{admissionId}`
+
+- Auth: Yes
+- Purpose: update admission before conversion
+
+### `PATCH /admissions/{admissionId}/approve`
+
+- Auth: Yes
+- Purpose: approve admission
+
+### `PATCH /admissions/{admissionId}/reject`
+
+- Auth: Yes
+- Purpose: reject admission
+
+### `GET /admissions/{admissionId}`
+
+- Auth: Yes
+- Purpose: fetch one admission
+
+### `GET /admissions`
+
+- Auth: Yes
+- Query:
+  - `schoolId` for `SuperAdmin`
+  - `pageNumber`
+  - `pageSize`
+  - `search`
+  - `status`
+  - `appliedClassId`
+  - `academicSessionId`
+
+## Student Management
+
+Module requirement:
+
+- `StudentManagement`
+
+### `POST /students/from-admission`
+
+- Auth: Yes
+- Purpose: convert approved admission into student
+- Validation:
+  - admission must be approved
+  - admission cannot be converted twice
+  - roll number unique inside class/section/session
+
+### `POST /students`
+
+- Auth: Yes
+- Purpose: create student manually
+
+### `PUT /students/{studentId}`
+
+- Auth: Yes
+- Purpose: update student
+
+### `GET /students/{studentId}`
+
+- Auth: Yes
+- Purpose: fetch one student with uploaded documents
+
+### `GET /students`
+
+- Auth: Yes
+- Query:
+  - `schoolId` for `SuperAdmin`
+  - `pageNumber`
+  - `pageSize`
+  - `search`
+  - `classId`
+  - `sectionId`
+  - `academicSessionId`
+  - `isActive`
+
+### `PATCH /students/{studentId}/promote`
+
+- Auth: Yes
+- Purpose: promote student to new class/section/session
+
+### `PATCH /students/{studentId}/transfer`
+
+- Auth: Yes
+- Purpose: transfer student to new class/section/session
+
+### `PATCH /students/{studentId}/deactivate`
+
+- Auth: Yes
+- Purpose: deactivate student
+
+### `POST /students/{studentId}/documents`
+
+- Auth: Yes
+- Content type: `multipart/form-data`
+- Purpose: upload student document
+- Validation:
+  - allowed types: PDF, JPG, PNG, DOC, DOCX
+  - max size: 5 MB
+
+## Teacher Management
+
+Module requirement:
+
+- `TeacherManagement`
+
+### `POST /teachers`
+
+- Auth: Yes
+- Purpose: create teacher
+- Validation:
+  - `employeeCode` unique inside tenant
+
+### `PUT /teachers/{teacherId}`
+
+- Auth: Yes
+- Purpose: update teacher
+
+### `PUT /teachers/{teacherId}/subjects`
+
+- Auth: Yes
+- Purpose: replace teacher subject assignments
+
+### `PUT /teachers/{teacherId}/classes`
+
+- Auth: Yes
+- Purpose: replace teacher class assignments
+
+### `GET /teachers/{teacherId}`
+
+- Auth: Yes
+- Purpose: fetch one teacher with subjects and classes
+
+### `GET /teachers`
+
+- Auth: Yes
+- Query:
+  - `schoolId` for `SuperAdmin`
+  - `pageNumber`
+  - `pageSize`
+  - `search`
+  - `isActive`
+
+### `PATCH /teachers/{teacherId}/deactivate`
+
+- Auth: Yes
+- Purpose: deactivate teacher
+
+## Study Management
+
+Module requirement:
+
+- `StudyManagement`
+
+### `POST /study/subjects`
+
+- Auth: Yes
+- Purpose: create subject
+
+### `PUT /study/subjects/{subjectId}`
+
+- Auth: Yes
+- Purpose: update subject
+
+### `GET /study/subjects`
+
+- Auth: Yes
+- Purpose: list subjects
+
+### `POST /study/syllabi`
+
+- Auth: Yes
+- Purpose: create or update syllabus by subject/class/session
+
+### `POST /study/materials`
+
+- Auth: Yes
+- Content type: `multipart/form-data`
+- Purpose: upload study material
+- Validation:
+  - allowed types: PDF, JPG, PNG, DOCX, PPTX
+  - max size: 10 MB
+
+### `POST /study/homework`
+
+- Auth: Yes
+- Content type: `multipart/form-data`
+- Purpose: create homework assignment with optional attachment
+
+### `GET /study/materials`
+
+- Auth: Yes
+- Query:
+  - `schoolId` for `SuperAdmin`
+  - `classId` optional
+  - `subjectId` optional
+
+### `GET /study/homework`
+
+- Auth: Yes
+- Query:
+  - `schoolId` for `SuperAdmin`
+  - `classId`
+  - `sectionId` optional
+
+## File Upload Notes
+
+- Uploaded files are organized by tenant, module, and category under `/uploads/...`
+- Storage implementation is abstracted behind a reusable file service for future Azure Blob / S3-compatible providers
+- Frontend should submit upload requests as `multipart/form-data`
+
+## Access Notes For Day 3
+
+- Tenant users must rely on JWT-derived `SchoolId`; cross-tenant request payloads are rejected
+- `SuperAdmin` can target any school by providing `schoolId` where required
+- Module entitlement and RBAC checks apply to all Day 3 APIs before business logic executes
