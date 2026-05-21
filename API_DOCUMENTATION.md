@@ -754,3 +754,235 @@ Module requirement:
 - Tenant users must rely on JWT-derived `SchoolId`; cross-tenant request payloads are rejected
 - `SuperAdmin` can target any school by providing `schoolId` where required
 - Module entitlement and RBAC checks apply to all Day 3 APIs before business logic executes
+
+## Day 4 APIs
+
+## Attendance Management
+
+Module requirement:
+
+- `AttendanceManagement`
+
+### `POST /attendance/mark`
+
+- Auth: Yes
+- Purpose: mark attendance for a class/section/day
+- Validation:
+  - one attendance session per class/section/day
+  - one attendance record per student/day
+  - student must belong to the tenant/class/section
+
+### `POST /attendance/bulk`
+
+- Auth: Yes
+- Purpose: bulk attendance insert for the same session payload
+
+### `PUT /attendance/records/{attendanceRecordId}`
+
+- Auth: Yes
+- Purpose: update an attendance record and refresh monthly summary
+
+### `GET /attendance/daily-report`
+
+- Auth: Yes
+- Query:
+  - `schoolId` for `SuperAdmin`
+  - `attendanceDate`
+  - `classId` optional
+  - `sectionId` optional
+  - `pageNumber`
+  - `pageSize`
+
+### `GET /attendance/students/{studentId}/history`
+
+- Auth: Yes
+- Purpose: paged attendance history for one student
+
+### `GET /attendance/monthly-summary`
+
+- Auth: Yes
+- Query:
+  - `schoolId` for `SuperAdmin`
+  - `year`
+  - `month`
+  - `classId` optional
+  - `sectionId` optional
+
+### `GET /attendance/analytics`
+
+- Auth: Yes
+- Purpose: attendance trend and aggregate counts
+
+## Fee Management
+
+Module requirement:
+
+- `FeeManagement`
+
+### `POST /fees/categories`
+
+- Auth: Yes
+- Purpose: create fee category
+
+### `POST /fees/structures`
+
+- Auth: Yes
+- Purpose: create fee structure for tenant/class/section scope
+
+### `POST /fees/fine-rules`
+
+- Auth: Yes
+- Purpose: create configurable late fine rule
+
+### `POST /fees/assignments`
+
+- Auth: Yes
+- Purpose: assign fee structure to selected students or a class/section
+
+### `POST /fees/invoices`
+
+- Auth: Yes
+- Purpose: generate invoice with optional installments
+- Business rules:
+  - invoice number is unique per school
+  - pending amount is tracked automatically
+
+### `POST /fees/invoices/{invoiceId}/payments`
+
+- Auth: Yes
+- Purpose: record payment transaction
+- Business rules:
+  - partial payment supported
+  - overpayment blocked
+  - invoice status recalculated automatically
+
+### `GET /fees/invoices`
+
+- Auth: Yes
+- Query:
+  - `schoolId` for `SuperAdmin`
+  - `studentId` optional
+  - `status` optional
+  - `fromDate` / `toDate` optional
+  - `search`
+  - `pageNumber`
+  - `pageSize`
+
+### `GET /fees/students/{studentId}/payments`
+
+- Auth: Yes
+- Purpose: payment history per student
+
+### `GET /fees/analytics`
+
+- Auth: Yes
+- Purpose: pending fees, overdue, collected amount, monthly revenue
+
+### `GET /fees/exports/invoices`
+
+- Auth: Yes
+- Purpose: export-ready paged invoice rows
+
+## Quiz Management
+
+Module requirement:
+
+- `QuizManagement`
+
+### `POST /quizzes`
+
+- Auth: Yes
+- Purpose: create quiz with questions and options
+
+### `PATCH /quizzes/{quizId}/publish`
+
+- Auth: Yes
+- Purpose: publish or unpublish quiz
+
+### `POST /quizzes/{quizId}/students/{studentId}/submit`
+
+- Auth: Yes
+- Purpose: submit quiz answers
+- Business rules:
+  - only within quiz window
+  - one submission per student
+  - auto evaluation on submission
+
+### `PATCH /quizzes/{quizId}/students/{studentId}/evaluate`
+
+- Auth: Yes
+- Purpose: manual score adjustment and evaluator remarks
+
+### `GET /quizzes`
+
+- Auth: Yes
+- Query:
+  - `schoolId` for `SuperAdmin`
+  - `classId`, `sectionId`, `subjectId` optional
+  - `isPublished` optional
+  - `search`
+  - `pageNumber`
+  - `pageSize`
+
+### `GET /quizzes/{quizId}`
+
+- Auth: Yes
+- Purpose: fetch quiz with questions
+
+### `GET /quizzes/{quizId}/leaderboard`
+
+- Auth: Yes
+- Purpose: ranking API for frontend leaderboard screens
+
+### `GET /quizzes/analytics`
+
+- Auth: Yes
+- Purpose: quiz participation and average score analytics
+
+## Dashboard, Audit, and Reporting
+
+Module requirement:
+
+- `DashboardManagement`
+
+### `GET /dashboard/summary`
+
+- Auth: Yes
+- Purpose: summary cards for platform or tenant dashboards
+
+### `GET /dashboard/analytics`
+
+- Auth: Yes
+- Purpose: chart-ready admissions, revenue, and attendance trends
+
+### `GET /dashboard/recent-activity`
+
+- Auth: Yes
+- Purpose: recent audit-backed activity feed
+
+### `GET /audit-logs`
+
+- Auth: Yes, `SuperAdmin` or `SchoolAdmin`
+- Purpose: immutable audit log listing with filters for user, module, and action
+
+### `GET /reports/exports/students`
+
+### `GET /reports/exports/attendance`
+
+### `GET /reports/exports/fees`
+
+### `GET /reports/exports/quiz-results`
+
+- Auth: Yes
+- Purpose: paged export-ready DTOs for CSV/Excel/PDF pipelines
+
+## Day 4 Validation and Access Summary
+
+- All new APIs remain under `/api/v1`
+- All new controllers use DTO-only request/response contracts
+- Tenant users are scoped by JWT-derived `SchoolId`
+- `SuperAdmin` can query cross-tenant data by providing `schoolId`
+- Module entitlement checks still run through the existing subscription middleware
+- RBAC still runs through `ModuleAccess` plus role/user permission evaluation
+- Audit logs now store change snapshots and request metadata fields
+- Pagination responses now include `totalPages`, `hasNextPage`, and `hasPreviousPage`

@@ -71,7 +71,17 @@ builder.Services
     });
 
 builder.Services.AddAuthorization();
-
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAll",
+        policy =>
+        {
+            policy
+                .AllowAnyOrigin()
+                .AllowAnyHeader()
+                .AllowAnyMethod();
+        });
+});
 var app = builder.Build();
 
 await SchoolErpDbInitializer.InitializeAsync(app.Services);
@@ -86,11 +96,14 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+var webRootPath = Path.Combine(AppContext.BaseDirectory, "wwwroot");
+Directory.CreateDirectory(webRootPath);
 app.UseStaticFiles(new StaticFileOptions
 {
-    FileProvider = new PhysicalFileProvider(Path.Combine(AppContext.BaseDirectory, "wwwroot")),
+    FileProvider = new PhysicalFileProvider(webRootPath),
     RequestPath = string.Empty
 });
+app.UseCors("AllowAll");
 app.UseAuthentication();
 app.UseMiddleware<SubscriptionValidationMiddleware>();
 app.UseAuthorization();

@@ -154,6 +154,15 @@ Day 3 APIs:
 - Study Management
 - Tenant-organized file uploads for student documents, study materials, and homework attachments
 
+Day 4 APIs:
+
+- Attendance Management
+- Fee Management
+- Quiz and Online Examination Management
+- Dashboard and analytics APIs
+- Audit log query APIs
+- Export and reporting APIs
+
 ## Module Organization
 
 - `Features/Authentication`
@@ -166,6 +175,12 @@ Day 3 APIs:
 - `Features/Students`
 - `Features/Teachers`
 - `Features/Study`
+- `Features/Attendance`
+- `Features/Fees`
+- `Features/Quizzes`
+- `Features/Dashboard`
+- `Features/AuditLogs`
+- `Features/Reports`
 
 Each feature contains:
 
@@ -180,7 +195,31 @@ Each feature contains:
 - `CurrentUserContext`: JWT-backed user/tenant context
 - `AccessControlService`: reusable module entitlement and permission evaluation
 - `AuditService`: audit logging for auth, school, staff, permission, and plan events
+- Audit logs now capture `SchoolId`, value snapshots, and request metadata fields for production-style traceability
 - `LocalFileStorageService`: reusable tenant/module-aware file storage abstraction with local implementation
+
+## Day 4 Highlights
+
+- Attendance:
+  - class/date session-based marking
+  - duplicate prevention by student/day
+  - monthly summaries and analytics
+- Fees:
+  - fee categories, structures, fine rules
+  - student/class assignments
+  - invoice generation with school-scoped numbering
+  - partial payments, pending balance tracking, and export-ready invoice rows
+- Quizzes:
+  - quiz creation with MCQ questions
+  - publish workflow
+  - one submission per student
+  - auto evaluation plus manual adjustment
+  - leaderboard and analytics APIs
+- Dashboard / Reporting:
+  - summary cards
+  - monthly chart-ready analytics
+  - recent activity feed
+  - paged export endpoints for students, attendance, fees, and quiz results
 
 ## Swagger Notes
 

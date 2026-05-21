@@ -12,6 +12,7 @@ public static class ModuleCodes
     public const string ResultManagement = "ResultManagement";
     public const string QuizManagement = "QuizManagement";
     public const string StudyManagement = "StudyManagement";
+    public const string DashboardManagement = "DashboardManagement";
     public const string IdCardManagement = "IdCardManagement";
     public const string AdmitCardManagement = "AdmitCardManagement";
 
@@ -27,6 +28,7 @@ public static class ModuleCodes
         ResultManagement,
         QuizManagement,
         StudyManagement,
+        DashboardManagement,
         IdCardManagement,
         AdmitCardManagement
     };

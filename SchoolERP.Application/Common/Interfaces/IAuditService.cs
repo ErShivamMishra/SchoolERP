@@ -12,4 +12,19 @@ public interface IAuditService
         Guid? tenantId,
         Guid? userId,
         CancellationToken cancellationToken);
+
+    Task WriteAsync(
+        string module,
+        string action,
+        string entityName,
+        string? entityId,
+        string outcome,
+        string? details,
+        Guid? tenantId,
+        Guid? userId,
+        string? oldValues,
+        string? newValues,
+        string? ipAddress,
+        string? userAgent,
+        CancellationToken cancellationToken);
 }
