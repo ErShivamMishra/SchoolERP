@@ -45,8 +45,12 @@ public static class SchoolErpDbInitializer
             new { Name = "Quiz Management", Code = ModuleCodes.QuizManagement, Description = "Quiz and assessment workflows.", DisplayOrder = 80 },
             new { Name = "Study Management", Code = ModuleCodes.StudyManagement, Description = "Study materials and content.", DisplayOrder = 90 },
             new { Name = "Dashboard Management", Code = ModuleCodes.DashboardManagement, Description = "Operational dashboards, analytics, audits, and reporting.", DisplayOrder = 100 },
-            new { Name = "ID Card Management", Code = ModuleCodes.IdCardManagement, Description = "ID card issuance.", DisplayOrder = 110 },
-            new { Name = "Admit Card Management", Code = ModuleCodes.AdmitCardManagement, Description = "Admit card generation.", DisplayOrder = 120 }
+            new { Name = "Notice Board Management", Code = ModuleCodes.NoticeBoardManagement, Description = "Announcements, notices, and audience targeting.", DisplayOrder = 110 },
+            new { Name = "Communication Management", Code = ModuleCodes.CommunicationManagement, Description = "Parent-teacher communication and conversation history.", DisplayOrder = 120 },
+            new { Name = "Transport Management", Code = ModuleCodes.TransportManagement, Description = "Vehicles, routes, drivers, and student assignments.", DisplayOrder = 130 },
+            new { Name = "Gallery Management", Code = ModuleCodes.GalleryManagement, Description = "Photo and video album management.", DisplayOrder = 140 },
+            new { Name = "ID Card Management", Code = ModuleCodes.IdCardManagement, Description = "ID card issuance.", DisplayOrder = 150 },
+            new { Name = "Admit Card Management", Code = ModuleCodes.AdmitCardManagement, Description = "Admit card generation.", DisplayOrder = 160 }
         };
 
         foreach (var seedModule in seedModules)
@@ -145,7 +149,9 @@ public static class SchoolErpDbInitializer
                 ModuleCodes.TeacherManagement,
                 ModuleCodes.AttendanceManagement,
                 ModuleCodes.StudyManagement,
-                ModuleCodes.DashboardManagement
+                ModuleCodes.DashboardManagement,
+                ModuleCodes.ResultManagement,
+                ModuleCodes.NoticeBoardManagement
             };
 
             await UpsertPlanEntitlementsAsync(dbContext, basicPlan.Id, modules, basicCodes, cancellationToken);

@@ -99,6 +99,11 @@ Seeded modules:
 - `ResultManagement`
 - `QuizManagement`
 - `StudyManagement`
+- `DashboardManagement`
+- `NoticeBoardManagement`
+- `CommunicationManagement`
+- `TransportManagement`
+- `GalleryManagement`
 - `IdCardManagement`
 - `AdmitCardManagement`
 
@@ -126,7 +131,7 @@ Permission model:
 
 Current seed behavior:
 
-- `BASIC` licenses `AdmissionManagement`, `StaffManagement`, `StudentManagement`, `TeacherManagement`, `AttendanceManagement`, `StudyManagement`
+- `BASIC` licenses `AdmissionManagement`, `StaffManagement`, `StudentManagement`, `TeacherManagement`, `AttendanceManagement`, `StudyManagement`, `DashboardManagement`, `ResultManagement`, `NoticeBoardManagement`
 - `PREMIUM` licenses all seeded modules
 
 ## Existing and Implemented Modules
@@ -162,6 +167,11 @@ Day 4 APIs:
 - Dashboard and analytics APIs
 - Audit log query APIs
 - Export and reporting APIs
+- Direct exam and result management APIs
+- Notice board and announcement APIs
+- Parent-teacher communication APIs
+- Transport management APIs
+- Photo and video gallery APIs
 
 ## Module Organization
 
@@ -181,6 +191,11 @@ Day 4 APIs:
 - `Features/Dashboard`
 - `Features/AuditLogs`
 - `Features/Reports`
+- `Features/Results`
+- `Features/Notices`
+- `Features/Communications`
+- `Features/Transport`
+- `Features/Gallery`
 
 Each feature contains:
 
@@ -215,6 +230,26 @@ Each feature contains:
   - one submission per student
   - auto evaluation plus manual adjustment
   - leaderboard and analytics APIs
+- Results:
+  - exams with subject-level definitions
+  - mark entry and publication
+  - student report cards and class result views
+- Notice Board:
+  - notices and announcements
+  - audience targeting
+  - publish/unpublish
+  - optional attachments
+- Communication:
+  - parent-teacher conversation threads
+  - message history
+  - attachment-ready messaging architecture
+- Transport:
+  - vehicles, routes, drivers
+  - student assignments with pickup/drop metadata
+- Gallery:
+  - albums
+  - photo/video uploads
+  - tenant-isolated media storage
 - Dashboard / Reporting:
   - summary cards
   - monthly chart-ready analytics

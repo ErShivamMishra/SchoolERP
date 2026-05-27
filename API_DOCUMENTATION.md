@@ -986,3 +986,146 @@ Module requirement:
 - RBAC still runs through `ModuleAccess` plus role/user permission evaluation
 - Audit logs now store change snapshots and request metadata fields
 - Pagination responses now include `totalPages`, `hasNextPage`, and `hasPreviousPage`
+
+## Final Coverage Additions
+
+## Exam and Result Management
+
+Module requirement:
+
+- `ResultManagement`
+
+### `POST /results/exams`
+
+- Auth: Yes
+- Purpose: create exam definition with class/session scope and subject-wise marks
+
+### `PATCH /results/exams/{examId}/publish`
+
+- Auth: Yes
+- Purpose: publish or unpublish exam
+
+### `POST /results/exams/{examId}/records`
+
+- Auth: Yes
+- Purpose: create or update exam result entries
+- Validation:
+  - obtained marks cannot exceed max marks
+  - result entries must stay within exam tenant/class scope
+
+### `GET /results/exams`
+
+### `GET /results/exams/{examId}`
+
+### `GET /results/exams/{examId}/students/{studentId}`
+
+### `GET /results/exams/{examId}/class-results`
+
+### `GET /results/analytics`
+
+- Auth: Yes
+- Purpose: exam discovery, report cards, class results, and result analytics
+
+## Notice Board and Announcements
+
+Module requirement:
+
+- `NoticeBoardManagement`
+
+### `POST /notices`
+
+- Auth: Yes
+- Content type: `multipart/form-data`
+- Purpose: create notice or announcement with optional attachment and audience targeting
+
+### `PATCH /notices/{noticeId}/publish`
+
+### `GET /notices`
+
+### `GET /notices/{noticeId}`
+
+- Auth: Yes
+- Purpose: publish/unpublish and list notices
+
+## Parent-Teacher Communication
+
+Module requirement:
+
+- `CommunicationManagement`
+
+### `POST /communications/conversations`
+
+- Auth: Yes
+- Purpose: create teacher-parent/student communication thread
+
+### `POST /communications/conversations/{conversationId}/messages`
+
+- Auth: Yes
+- Content type: `multipart/form-data`
+- Purpose: send message in conversation with future notification-ready structure
+
+### `GET /communications/conversations`
+
+### `GET /communications/conversations/{conversationId}/messages`
+
+- Auth: Yes
+- Purpose: conversation list and communication history
+
+## Transport Management
+
+Module requirement:
+
+- `TransportManagement`
+
+### `POST /transport/vehicles`
+
+### `POST /transport/routes`
+
+### `POST /transport/drivers`
+
+### `POST /transport/assignments`
+
+### `GET /transport/vehicles`
+
+### `GET /transport/routes`
+
+### `GET /transport/drivers`
+
+### `GET /transport/assignments`
+
+- Auth: Yes
+- Purpose: manage vehicles, routes, drivers, and student transport assignments
+
+## Photo and Video Gallery
+
+Module requirement:
+
+- `GalleryManagement`
+
+### `POST /gallery/albums`
+
+### `PATCH /gallery/albums/{albumId}/publish`
+
+### `POST /gallery/albums/{albumId}/media`
+
+### `GET /gallery/albums`
+
+### `GET /gallery/albums/{albumId}/media`
+
+- Auth: Yes
+- Purpose: album management and tenant-isolated photo/video uploads
+
+## Feature Coverage Summary
+
+- Student Information Management: covered by `Students` plus admission conversion and student documents.
+- Staff & Teacher Management: covered by `Staff` and `Teachers`.
+- Attendance Management: covered by `Attendance`.
+- Exam & Result Management: covered by `Quizzes` and direct `Results`.
+- Fee & Invoice Management: covered by `Fees`.
+- Online Admission Management: covered by `Admissions`.
+- Homework & Assignment Management: covered by `Study`.
+- Notice Board & Announcements: covered by `Notices`.
+- Parent-Teacher Communication: covered by `Communications`.
+- Reports & Analytics Dashboard: covered by `Dashboard`, `AuditLogs`, and `Reports`.
+- Transport Management: covered by `Transport`.
+- Photo & Video Gallery: covered by `Gallery`.
