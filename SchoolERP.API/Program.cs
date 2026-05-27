@@ -1,9 +1,11 @@
 using System.Text;
+using System.Threading.RateLimiting;
 using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.AspNetCore.RateLimiting;
 using SchoolERP.API.Common.Services;
 using SchoolERP.API.Common.Responses;
 using SchoolERP.API.Extensions;
@@ -71,6 +73,30 @@ builder.Services
     });
 
 builder.Services.AddAuthorization();
+builder.Services.AddRateLimiter(options =>
+{
+    options.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
+    options.AddFixedWindowLimiter("auth-login", limiterOptions =>
+    {
+        limiterOptions.PermitLimit = 5;
+        limiterOptions.Window = TimeSpan.FromMinutes(1);
+        limiterOptions.QueueLimit = 0;
+    });
+
+    options.AddFixedWindowLimiter("auth-refresh", limiterOptions =>
+    {
+        limiterOptions.PermitLimit = 10;
+        limiterOptions.Window = TimeSpan.FromMinutes(1);
+        limiterOptions.QueueLimit = 0;
+    });
+
+    options.AddFixedWindowLimiter("auth-change-password", limiterOptions =>
+    {
+        limiterOptions.PermitLimit = 5;
+        limiterOptions.Window = TimeSpan.FromMinutes(5);
+        limiterOptions.QueueLimit = 0;
+    });
+});
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAll",
@@ -105,6 +131,8 @@ app.UseStaticFiles(new StaticFileOptions
 });
 app.UseCors("AllowAll");
 app.UseAuthentication();
+app.UseRateLimiter();
+app.UseMiddleware<ForcePasswordResetMiddleware>();
 app.UseMiddleware<SubscriptionValidationMiddleware>();
 app.UseAuthorization();
 

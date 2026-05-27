@@ -14,6 +14,13 @@ public sealed class AuthRepository(SchoolErpDbContext dbContext) : IAuthReposito
             .FirstOrDefaultAsync(x => x.NormalizedEmail == normalizedEmail, cancellationToken);
     }
 
+    public async Task<User?> GetUserByIdAsync(Guid userId, CancellationToken cancellationToken)
+    {
+        return await dbContext.Users
+            .Include(x => x.Role)
+            .FirstOrDefaultAsync(x => x.Id == userId, cancellationToken);
+    }
+
     public async Task<RefreshToken?> GetRefreshTokenAsync(string refreshTokenHash, CancellationToken cancellationToken)
     {
         return await dbContext.RefreshTokens

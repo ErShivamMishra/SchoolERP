@@ -17,6 +17,7 @@ public sealed class SchoolErpDbContext : DbContext, IUnitOfWork
     public DbSet<AttendanceRecord> AttendanceRecords => Set<AttendanceRecord>();
     public DbSet<AttendanceSession> AttendanceSessions => Set<AttendanceSession>();
     public DbSet<AttendanceSummary> AttendanceSummaries => Set<AttendanceSummary>();
+    public DbSet<AdmitCardTemplate> AdmitCardTemplates => Set<AdmitCardTemplate>();
     public DbSet<Campus> Campuses => Set<Campus>();
     public DbSet<Class> Classes => Set<Class>();
     public DbSet<Exam> Exams => Set<Exam>();
@@ -28,11 +29,16 @@ public sealed class SchoolErpDbContext : DbContext, IUnitOfWork
     public DbSet<FineRule> FineRules => Set<FineRule>();
     public DbSet<GalleryAlbum> GalleryAlbums => Set<GalleryAlbum>();
     public DbSet<GalleryMedia> GalleryMedia => Set<GalleryMedia>();
+    public DbSet<GeneratedAdmitCard> GeneratedAdmitCards => Set<GeneratedAdmitCard>();
+    public DbSet<GeneratedIdCard> GeneratedIdCards => Set<GeneratedIdCard>();
     public DbSet<GuardianDetails> GuardianDetails => Set<GuardianDetails>();
     public DbSet<HomeworkAssignment> HomeworkAssignments => Set<HomeworkAssignment>();
+    public DbSet<IdCardTemplate> IdCardTemplates => Set<IdCardTemplate>();
     public DbSet<Invoice> Invoices => Set<Invoice>();
     public DbSet<Module> Modules => Set<Module>();
     public DbSet<PaymentTransaction> PaymentTransactions => Set<PaymentTransaction>();
+    public DbSet<Parent> Parents => Set<Parent>();
+    public DbSet<ParentStudentRelation> ParentStudentRelations => Set<ParentStudentRelation>();
     public DbSet<Permission> Permissions => Set<Permission>();
     public DbSet<PlanModuleEntitlement> PlanModuleEntitlements => Set<PlanModuleEntitlement>();
     public DbSet<NoticeBoardItem> NoticeBoardItems => Set<NoticeBoardItem>();
@@ -82,6 +88,7 @@ public sealed class SchoolErpDbContext : DbContext, IUnitOfWork
         modelBuilder.Entity<AttendanceSession>().HasIndex(x => new { x.SchoolId, x.ClassId, x.SectionId, x.AttendanceDate }).IsUnique();
         modelBuilder.Entity<AttendanceRecord>().HasIndex(x => new { x.SchoolId, x.StudentId, x.AttendanceDate }).IsUnique();
         modelBuilder.Entity<AttendanceSummary>().HasIndex(x => new { x.SchoolId, x.StudentId, x.Year, x.Month }).IsUnique();
+        modelBuilder.Entity<AdmitCardTemplate>().HasIndex(x => new { x.SchoolId, x.TemplateName, x.Version }).IsUnique();
         modelBuilder.Entity<Exam>().HasIndex(x => new { x.SchoolId, x.ClassId, x.SectionId, x.AcademicSessionId, x.Title }).IsUnique();
         modelBuilder.Entity<ExamSubject>().HasIndex(x => new { x.ExamId, x.SubjectId }).IsUnique();
         modelBuilder.Entity<ExamResult>().HasIndex(x => new { x.SchoolId, x.ExamSubjectId, x.StudentId }).IsUnique();
@@ -91,9 +98,16 @@ public sealed class SchoolErpDbContext : DbContext, IUnitOfWork
         modelBuilder.Entity<StudentFeeAssignment>().HasIndex(x => new { x.SchoolId, x.StudentId, x.FeeStructureId, x.AcademicSessionId }).IsUnique();
         modelBuilder.Entity<FineRule>().HasIndex(x => new { x.SchoolId, x.Name }).IsUnique();
         modelBuilder.Entity<GalleryAlbum>().HasIndex(x => new { x.SchoolId, x.Title }).IsUnique();
+        modelBuilder.Entity<GeneratedAdmitCard>().HasIndex(x => new { x.SchoolId, x.ExamId, x.StudentId }).IsUnique();
+        modelBuilder.Entity<GeneratedIdCard>().HasIndex(x => new { x.SchoolId, x.TemplateId, x.StudentId }).IsUnique().HasFilter("[StudentId] IS NOT NULL");
+        modelBuilder.Entity<GeneratedIdCard>().HasIndex(x => new { x.SchoolId, x.TemplateId, x.TeacherId }).IsUnique().HasFilter("[TeacherId] IS NOT NULL");
+        modelBuilder.Entity<IdCardTemplate>().HasIndex(x => new { x.SchoolId, x.TemplateName, x.Version }).IsUnique();
         modelBuilder.Entity<Invoice>().HasIndex(x => new { x.SchoolId, x.InvoiceNumber }).IsUnique();
         modelBuilder.Entity<NoticeBoardItem>().HasIndex(x => new { x.SchoolId, x.Title, x.NoticeType, x.CreatedAtUtc });
+        modelBuilder.Entity<Parent>().HasIndex(x => new { x.SchoolId, x.Email }).IsUnique();
+        modelBuilder.Entity<Parent>().HasIndex(x => x.UserId).IsUnique();
         modelBuilder.Entity<ParentTeacherConversation>().HasIndex(x => new { x.SchoolId, x.StudentId, x.TeacherId, x.Subject }).IsUnique();
+        modelBuilder.Entity<ParentStudentRelation>().HasIndex(x => new { x.SchoolId, x.ParentId, x.StudentId }).IsUnique();
         modelBuilder.Entity<Student>().HasIndex(x => new { x.SchoolId, x.ClassId, x.SectionId, x.AcademicSessionId, x.RollNumber }).IsUnique();
         modelBuilder.Entity<Student>().HasIndex(x => x.AdmissionId).IsUnique().HasFilter("[AdmissionId] IS NOT NULL");
         modelBuilder.Entity<StudentAcademicInfo>().HasIndex(x => x.StudentId).IsUnique();
@@ -120,6 +134,7 @@ public sealed class SchoolErpDbContext : DbContext, IUnitOfWork
         modelBuilder.Entity<AttendanceRecord>().Property(x => x.RowVersion).IsRowVersion();
         modelBuilder.Entity<AttendanceSummary>().Property(x => x.AttendancePercentage).HasPrecision(5, 2);
         modelBuilder.Entity<AttendanceSummary>().Property(x => x.RowVersion).IsRowVersion();
+        modelBuilder.Entity<AdmitCardTemplate>().Property(x => x.RowVersion).IsRowVersion();
         modelBuilder.Entity<Exam>().Property(x => x.RowVersion).IsRowVersion();
         modelBuilder.Entity<ExamSubject>().Property(x => x.MaxMarks).HasPrecision(18, 2);
         modelBuilder.Entity<ExamSubject>().Property(x => x.PassingMarks).HasPrecision(18, 2);
@@ -135,6 +150,7 @@ public sealed class SchoolErpDbContext : DbContext, IUnitOfWork
         modelBuilder.Entity<FineRule>().Property(x => x.MaximumAmount).HasPrecision(18, 2);
         modelBuilder.Entity<FineRule>().Property(x => x.RowVersion).IsRowVersion();
         modelBuilder.Entity<GalleryAlbum>().Property(x => x.RowVersion).IsRowVersion();
+        modelBuilder.Entity<IdCardTemplate>().Property(x => x.RowVersion).IsRowVersion();
         modelBuilder.Entity<Invoice>().Property(x => x.TotalAmount).HasPrecision(18, 2);
         modelBuilder.Entity<Invoice>().Property(x => x.PaidAmount).HasPrecision(18, 2);
         modelBuilder.Entity<Invoice>().Property(x => x.PendingAmount).HasPrecision(18, 2);
@@ -170,6 +186,7 @@ public sealed class SchoolErpDbContext : DbContext, IUnitOfWork
         modelBuilder.Entity<AttendanceSession>().HasQueryFilter(x => !x.IsDeleted);
         modelBuilder.Entity<AttendanceRecord>().HasQueryFilter(x => !x.IsDeleted);
         modelBuilder.Entity<AttendanceSummary>().HasQueryFilter(x => !x.IsDeleted);
+        modelBuilder.Entity<AdmitCardTemplate>().HasQueryFilter(x => !x.IsDeleted);
         modelBuilder.Entity<Exam>().HasQueryFilter(x => !x.IsDeleted);
         modelBuilder.Entity<ExamSubject>().HasQueryFilter(x => !x.IsDeleted);
         modelBuilder.Entity<ExamResult>().HasQueryFilter(x => !x.IsDeleted);
@@ -181,14 +198,19 @@ public sealed class SchoolErpDbContext : DbContext, IUnitOfWork
         modelBuilder.Entity<FineRule>().HasQueryFilter(x => !x.IsDeleted);
         modelBuilder.Entity<GalleryAlbum>().HasQueryFilter(x => !x.IsDeleted);
         modelBuilder.Entity<GalleryMedia>().HasQueryFilter(x => !x.IsDeleted);
+        modelBuilder.Entity<GeneratedAdmitCard>().HasQueryFilter(x => !x.IsDeleted);
+        modelBuilder.Entity<GeneratedIdCard>().HasQueryFilter(x => !x.IsDeleted);
         modelBuilder.Entity<GuardianDetails>().HasQueryFilter(x => !x.IsDeleted);
         modelBuilder.Entity<HomeworkAssignment>().HasQueryFilter(x => !x.IsDeleted);
         modelBuilder.Entity<Invoice>().HasQueryFilter(x => !x.IsDeleted);
+        modelBuilder.Entity<IdCardTemplate>().HasQueryFilter(x => !x.IsDeleted);
         modelBuilder.Entity<User>().HasQueryFilter(x => !x.IsDeleted);
         modelBuilder.Entity<Role>().HasQueryFilter(x => !x.IsDeleted);
         modelBuilder.Entity<Module>().HasQueryFilter(x => !x.IsDeleted);
         modelBuilder.Entity<NoticeBoardItem>().HasQueryFilter(x => !x.IsDeleted);
         modelBuilder.Entity<PaymentTransaction>().HasQueryFilter(x => !x.IsDeleted);
+        modelBuilder.Entity<Parent>().HasQueryFilter(x => !x.IsDeleted);
+        modelBuilder.Entity<ParentStudentRelation>().HasQueryFilter(x => !x.IsDeleted);
         modelBuilder.Entity<Permission>().HasQueryFilter(x => !x.IsDeleted);
         modelBuilder.Entity<ParentTeacherConversation>().HasQueryFilter(x => !x.IsDeleted);
         modelBuilder.Entity<ParentTeacherMessage>().HasQueryFilter(x => !x.IsDeleted);
@@ -234,6 +256,36 @@ public sealed class SchoolErpDbContext : DbContext, IUnitOfWork
             .HasMany(x => x.Users)
             .WithOne(x => x.Tenant)
             .HasForeignKey(x => x.TenantId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        modelBuilder.Entity<Parent>()
+            .HasOne(x => x.School)
+            .WithMany()
+            .HasForeignKey(x => x.SchoolId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        modelBuilder.Entity<Parent>()
+            .HasOne(x => x.User)
+            .WithMany()
+            .HasForeignKey(x => x.UserId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        modelBuilder.Entity<ParentStudentRelation>()
+            .HasOne(x => x.School)
+            .WithMany()
+            .HasForeignKey(x => x.SchoolId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        modelBuilder.Entity<ParentStudentRelation>()
+            .HasOne(x => x.Parent)
+            .WithMany(x => x.StudentRelations)
+            .HasForeignKey(x => x.ParentId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        modelBuilder.Entity<ParentStudentRelation>()
+            .HasOne(x => x.Student)
+            .WithMany()
+            .HasForeignKey(x => x.StudentId)
             .OnDelete(DeleteBehavior.Restrict);
 
         modelBuilder.Entity<User>()
@@ -673,6 +725,66 @@ public sealed class SchoolErpDbContext : DbContext, IUnitOfWork
             .WithMany(x => x.MediaItems)
             .HasForeignKey(x => x.AlbumId)
             .OnDelete(DeleteBehavior.Cascade);
+
+        modelBuilder.Entity<IdCardTemplate>()
+            .HasOne(x => x.School)
+            .WithMany()
+            .HasForeignKey(x => x.SchoolId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        modelBuilder.Entity<GeneratedIdCard>()
+            .HasOne(x => x.School)
+            .WithMany()
+            .HasForeignKey(x => x.SchoolId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        modelBuilder.Entity<GeneratedIdCard>()
+            .HasOne(x => x.Template)
+            .WithMany(x => x.GeneratedCards)
+            .HasForeignKey(x => x.TemplateId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        modelBuilder.Entity<GeneratedIdCard>()
+            .HasOne(x => x.Student)
+            .WithMany()
+            .HasForeignKey(x => x.StudentId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        modelBuilder.Entity<GeneratedIdCard>()
+            .HasOne(x => x.Teacher)
+            .WithMany()
+            .HasForeignKey(x => x.TeacherId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        modelBuilder.Entity<AdmitCardTemplate>()
+            .HasOne(x => x.School)
+            .WithMany()
+            .HasForeignKey(x => x.SchoolId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        modelBuilder.Entity<GeneratedAdmitCard>()
+            .HasOne(x => x.School)
+            .WithMany()
+            .HasForeignKey(x => x.SchoolId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        modelBuilder.Entity<GeneratedAdmitCard>()
+            .HasOne(x => x.Template)
+            .WithMany(x => x.GeneratedCards)
+            .HasForeignKey(x => x.TemplateId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        modelBuilder.Entity<GeneratedAdmitCard>()
+            .HasOne(x => x.Exam)
+            .WithMany()
+            .HasForeignKey(x => x.ExamId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        modelBuilder.Entity<GeneratedAdmitCard>()
+            .HasOne(x => x.Student)
+            .WithMany()
+            .HasForeignKey(x => x.StudentId)
+            .OnDelete(DeleteBehavior.Restrict);
 
         modelBuilder.Entity<Student>()
             .HasOne(x => x.School)

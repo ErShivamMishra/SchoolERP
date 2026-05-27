@@ -50,7 +50,8 @@ public static class SchoolErpDbInitializer
             new { Name = "Transport Management", Code = ModuleCodes.TransportManagement, Description = "Vehicles, routes, drivers, and student assignments.", DisplayOrder = 130 },
             new { Name = "Gallery Management", Code = ModuleCodes.GalleryManagement, Description = "Photo and video album management.", DisplayOrder = 140 },
             new { Name = "ID Card Management", Code = ModuleCodes.IdCardManagement, Description = "ID card issuance.", DisplayOrder = 150 },
-            new { Name = "Admit Card Management", Code = ModuleCodes.AdmitCardManagement, Description = "Admit card generation.", DisplayOrder = 160 }
+            new { Name = "Admit Card Management", Code = ModuleCodes.AdmitCardManagement, Description = "Admit card generation.", DisplayOrder = 160 },
+            new { Name = "Parent Portal Management", Code = ModuleCodes.ParentPortalManagement, Description = "Parent accounts, student linkage, and parent self-service APIs.", DisplayOrder = 170 }
         };
 
         foreach (var seedModule in seedModules)
@@ -151,7 +152,8 @@ public static class SchoolErpDbInitializer
                 ModuleCodes.StudyManagement,
                 ModuleCodes.DashboardManagement,
                 ModuleCodes.ResultManagement,
-                ModuleCodes.NoticeBoardManagement
+                ModuleCodes.NoticeBoardManagement,
+                ModuleCodes.ParentPortalManagement
             };
 
             await UpsertPlanEntitlementsAsync(dbContext, basicPlan.Id, modules, basicCodes, cancellationToken);

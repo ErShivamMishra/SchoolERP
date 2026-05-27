@@ -110,6 +110,23 @@ Swagger usage:
   - refresh token is rotated on success
   - frontend must replace both tokens
 
+### `POST /auth/change-password`
+
+- Auth: Yes
+- Purpose: change a temporary or current password and receive fresh tokens
+- Body:
+
+```json
+{
+  "currentPassword": "Temp@12345",
+  "newPassword": "NewStrong@123"
+}
+```
+
+- Notes:
+  - temporary-password users are blocked from other protected APIs until this succeeds
+  - login / refresh / change-password endpoints are rate limited
+
 ### `POST /schools`
 
 - Auth: Yes, `SuperAdmin`
@@ -1114,6 +1131,86 @@ Module requirement:
 
 - Auth: Yes
 - Purpose: album management and tenant-isolated photo/video uploads
+
+## ID Card Management
+
+Module requirement:
+
+- `IdCardManagement`
+
+### `POST /id-cards/templates`
+
+- Auth: Yes
+- Purpose: create a versioned ID card template
+
+### `POST /id-cards/generate/students`
+
+- Auth: Yes
+- Purpose: bulk-generate print-ready student ID card payloads
+
+### `POST /id-cards/generate/teachers`
+
+- Auth: Yes
+- Purpose: bulk-generate print-ready teacher ID card payloads
+
+## Admit Card Management
+
+Module requirement:
+
+- `AdmitCardManagement`
+
+### `POST /admit-cards/templates`
+
+- Auth: Yes
+- Purpose: create a versioned admit card template
+
+### `POST /admit-cards/generate`
+
+- Auth: Yes
+- Purpose: generate exam-wise student admit cards with seat and room metadata
+- Business rules:
+  - student must belong to the exam class/section scope
+  - admit card generation is tenant-scoped
+
+## Parent Portal Support
+
+Module requirement:
+
+- `ParentPortalManagement`
+
+### `POST /parents`
+
+- Auth: Yes, `SuperAdmin` / `SchoolAdmin` / `Staff`
+- Purpose: create a parent user profile linked to the single `User` authentication model
+- Success data includes:
+  - `parent`
+  - `temporaryPassword`
+
+### `POST /parents/{parentId}/students`
+
+- Auth: Yes, `SuperAdmin` / `SchoolAdmin` / `Staff`
+- Purpose: link a parent to a student with view permissions
+
+### `GET /parents/me/students`
+
+- Auth: Yes, `Parent`
+- Purpose: list students linked to the current parent account
+
+### `GET /parents/me/students/{studentId}/attendance`
+
+### `GET /parents/me/students/{studentId}/fees`
+
+### `GET /parents/me/students/{studentId}/results`
+
+### `GET /parents/me/students/{studentId}/homework`
+
+### `GET /parents/me/notices`
+
+- Auth: Yes, `Parent`
+- Purpose: read-only parent portal APIs
+- Business rules:
+  - parent can access linked students only
+  - tenant isolation is enforced from the authenticated parent account
 
 ## Feature Coverage Summary
 

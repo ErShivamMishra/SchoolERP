@@ -19,6 +19,7 @@ public static class ModuleCodes
     public const string GalleryManagement = "GalleryManagement";
     public const string IdCardManagement = "IdCardManagement";
     public const string AdmitCardManagement = "AdmitCardManagement";
+    public const string ParentPortalManagement = "ParentPortalManagement";
 
     public static readonly IReadOnlyCollection<string> Seeded = new[]
     {
@@ -38,6 +39,7 @@ public static class ModuleCodes
         TransportManagement,
         GalleryManagement,
         IdCardManagement,
-        AdmitCardManagement
+        AdmitCardManagement,
+        ParentPortalManagement
     };
 }

@@ -162,6 +162,63 @@ namespace SchoolERP.Infrastructure.Persistence.Migrations
                     b.ToTable("Admissions");
                 });
 
+            modelBuilder.Entity("SchoolERP.Domain.Entities.AdmitCardTemplate", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedAtUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("LayoutJson")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("LogoUrl")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("ModifiedAtUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("ModifiedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<byte[]>("RowVersion")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("rowversion");
+
+                    b.Property<string>("SchoolDetails")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("SchoolId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("TemplateName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<int>("Version")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("SchoolId", "TemplateName", "Version")
+                        .IsUnique();
+
+                    b.ToTable("AdmitCardTemplates");
+                });
+
             modelBuilder.Entity("SchoolERP.Domain.Entities.AttendanceRecord", b =>
                 {
                     b.Property<Guid>("Id")
@@ -1048,6 +1105,147 @@ namespace SchoolERP.Infrastructure.Persistence.Migrations
                     b.ToTable("GalleryMedia");
                 });
 
+            modelBuilder.Entity("SchoolERP.Domain.Entities.GeneratedAdmitCard", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedAtUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("ExamId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("GeneratedAtUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Instructions")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime?>("ModifiedAtUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("ModifiedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("RoomNumber")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("SchoolId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("SeatNumber")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("SnapshotJson")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("StudentId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("TemplateId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ExamId");
+
+                    b.HasIndex("StudentId");
+
+                    b.HasIndex("TemplateId");
+
+                    b.HasIndex("SchoolId", "ExamId", "StudentId")
+                        .IsUnique();
+
+                    b.ToTable("GeneratedAdmitCards");
+                });
+
+            modelBuilder.Entity("SchoolERP.Domain.Entities.GeneratedIdCard", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("BarcodePayload")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("CardHolderName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("CardHolderType")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("CardIdentifier")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("CreatedAtUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("GeneratedAtUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime?>("ModifiedAtUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("ModifiedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("QrCodePayload")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("SchoolId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("SnapshotJson")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid?>("StudentId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("TeacherId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("TemplateId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("StudentId");
+
+                    b.HasIndex("TeacherId");
+
+                    b.HasIndex("TemplateId");
+
+                    b.HasIndex("SchoolId", "TemplateId", "StudentId")
+                        .IsUnique()
+                        .HasFilter("[StudentId] IS NOT NULL");
+
+                    b.HasIndex("SchoolId", "TemplateId", "TeacherId")
+                        .IsUnique()
+                        .HasFilter("[TeacherId] IS NOT NULL");
+
+                    b.ToTable("GeneratedIdCards");
+                });
+
             modelBuilder.Entity("SchoolERP.Domain.Entities.GuardianDetails", b =>
                 {
                     b.Property<Guid>("Id")
@@ -1178,6 +1376,63 @@ namespace SchoolERP.Infrastructure.Persistence.Migrations
                     b.HasIndex("TeacherId");
 
                     b.ToTable("HomeworkAssignments");
+                });
+
+            modelBuilder.Entity("SchoolERP.Domain.Entities.IdCardTemplate", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedAtUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("LayoutJson")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("LogoUrl")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("ModifiedAtUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("ModifiedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<byte[]>("RowVersion")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("rowversion");
+
+                    b.Property<string>("SchoolDetails")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("SchoolId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("TemplateName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<int>("Version")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("SchoolId", "TemplateName", "Version")
+                        .IsUnique();
+
+                    b.ToTable("IdCardTemplates");
                 });
 
             modelBuilder.Entity("SchoolERP.Domain.Entities.Invoice", b =>
@@ -1392,6 +1647,132 @@ namespace SchoolERP.Infrastructure.Persistence.Migrations
                     b.HasIndex("SchoolId", "Title", "NoticeType", "CreatedAtUtc");
 
                     b.ToTable("NoticeBoardItems");
+                });
+
+            modelBuilder.Entity("SchoolERP.Domain.Entities.Parent", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Address")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("AlternatePhoneNumber")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("CreatedAtUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("FullName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime?>("ModifiedAtUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("ModifiedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Occupation")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PhoneNumber")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("SchoolId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId")
+                        .IsUnique();
+
+                    b.HasIndex("SchoolId", "Email")
+                        .IsUnique();
+
+                    b.ToTable("Parents");
+                });
+
+            modelBuilder.Entity("SchoolERP.Domain.Entities.ParentStudentRelation", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<bool>("CanViewAttendance")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("CanViewFees")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("CanViewHomework")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("CanViewNotices")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("CanViewResults")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime>("CreatedAtUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsPrimaryContact")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime?>("ModifiedAtUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("ModifiedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("ParentId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("RelationshipType")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("SchoolId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("StudentId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ParentId");
+
+                    b.HasIndex("StudentId");
+
+                    b.HasIndex("SchoolId", "ParentId", "StudentId")
+                        .IsUnique();
+
+                    b.ToTable("ParentStudentRelations");
                 });
 
             modelBuilder.Entity("SchoolERP.Domain.Entities.ParentTeacherConversation", b =>
@@ -3314,6 +3695,17 @@ namespace SchoolERP.Infrastructure.Persistence.Migrations
                     b.Navigation("School");
                 });
 
+            modelBuilder.Entity("SchoolERP.Domain.Entities.AdmitCardTemplate", b =>
+                {
+                    b.HasOne("SchoolERP.Domain.Entities.School", "School")
+                        .WithMany()
+                        .HasForeignKey("SchoolId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("School");
+                });
+
             modelBuilder.Entity("SchoolERP.Domain.Entities.AttendanceRecord", b =>
                 {
                     b.HasOne("SchoolERP.Domain.Entities.AttendanceSession", "AttendanceSession")
@@ -3643,6 +4035,74 @@ namespace SchoolERP.Infrastructure.Persistence.Migrations
                     b.Navigation("School");
                 });
 
+            modelBuilder.Entity("SchoolERP.Domain.Entities.GeneratedAdmitCard", b =>
+                {
+                    b.HasOne("SchoolERP.Domain.Entities.Exam", "Exam")
+                        .WithMany()
+                        .HasForeignKey("ExamId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("SchoolERP.Domain.Entities.School", "School")
+                        .WithMany()
+                        .HasForeignKey("SchoolId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("SchoolERP.Domain.Entities.Student", "Student")
+                        .WithMany()
+                        .HasForeignKey("StudentId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("SchoolERP.Domain.Entities.AdmitCardTemplate", "Template")
+                        .WithMany("GeneratedCards")
+                        .HasForeignKey("TemplateId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Exam");
+
+                    b.Navigation("School");
+
+                    b.Navigation("Student");
+
+                    b.Navigation("Template");
+                });
+
+            modelBuilder.Entity("SchoolERP.Domain.Entities.GeneratedIdCard", b =>
+                {
+                    b.HasOne("SchoolERP.Domain.Entities.School", "School")
+                        .WithMany()
+                        .HasForeignKey("SchoolId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("SchoolERP.Domain.Entities.Student", "Student")
+                        .WithMany()
+                        .HasForeignKey("StudentId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("SchoolERP.Domain.Entities.Teacher", "Teacher")
+                        .WithMany()
+                        .HasForeignKey("TeacherId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("SchoolERP.Domain.Entities.IdCardTemplate", "Template")
+                        .WithMany("GeneratedCards")
+                        .HasForeignKey("TemplateId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("School");
+
+                    b.Navigation("Student");
+
+                    b.Navigation("Teacher");
+
+                    b.Navigation("Template");
+                });
+
             modelBuilder.Entity("SchoolERP.Domain.Entities.GuardianDetails", b =>
                 {
                     b.HasOne("SchoolERP.Domain.Entities.Admission", "Admission")
@@ -3705,6 +4165,17 @@ namespace SchoolERP.Infrastructure.Persistence.Migrations
                     b.Navigation("Teacher");
                 });
 
+            modelBuilder.Entity("SchoolERP.Domain.Entities.IdCardTemplate", b =>
+                {
+                    b.HasOne("SchoolERP.Domain.Entities.School", "School")
+                        .WithMany()
+                        .HasForeignKey("SchoolId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("School");
+                });
+
             modelBuilder.Entity("SchoolERP.Domain.Entities.Invoice", b =>
                 {
                     b.HasOne("SchoolERP.Domain.Entities.FineRule", "FineRule")
@@ -3761,6 +4232,52 @@ namespace SchoolERP.Infrastructure.Persistence.Migrations
                     b.Navigation("School");
 
                     b.Navigation("Section");
+                });
+
+            modelBuilder.Entity("SchoolERP.Domain.Entities.Parent", b =>
+                {
+                    b.HasOne("SchoolERP.Domain.Entities.School", "School")
+                        .WithMany()
+                        .HasForeignKey("SchoolId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("SchoolERP.Domain.Entities.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("School");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("SchoolERP.Domain.Entities.ParentStudentRelation", b =>
+                {
+                    b.HasOne("SchoolERP.Domain.Entities.Parent", "Parent")
+                        .WithMany("StudentRelations")
+                        .HasForeignKey("ParentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("SchoolERP.Domain.Entities.School", "School")
+                        .WithMany()
+                        .HasForeignKey("SchoolId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("SchoolERP.Domain.Entities.Student", "Student")
+                        .WithMany()
+                        .HasForeignKey("StudentId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Parent");
+
+                    b.Navigation("School");
+
+                    b.Navigation("Student");
                 });
 
             modelBuilder.Entity("SchoolERP.Domain.Entities.ParentTeacherConversation", b =>
@@ -4486,6 +5003,11 @@ namespace SchoolERP.Infrastructure.Persistence.Migrations
                     b.Navigation("Student");
                 });
 
+            modelBuilder.Entity("SchoolERP.Domain.Entities.AdmitCardTemplate", b =>
+                {
+                    b.Navigation("GeneratedCards");
+                });
+
             modelBuilder.Entity("SchoolERP.Domain.Entities.AttendanceSession", b =>
                 {
                     b.Navigation("Records");
@@ -4533,6 +5055,11 @@ namespace SchoolERP.Infrastructure.Persistence.Migrations
                     b.Navigation("MediaItems");
                 });
 
+            modelBuilder.Entity("SchoolERP.Domain.Entities.IdCardTemplate", b =>
+                {
+                    b.Navigation("GeneratedCards");
+                });
+
             modelBuilder.Entity("SchoolERP.Domain.Entities.Invoice", b =>
                 {
                     b.Navigation("Installments");
@@ -4547,6 +5074,11 @@ namespace SchoolERP.Infrastructure.Persistence.Migrations
                     b.Navigation("PlanModuleEntitlements");
 
                     b.Navigation("UserPermissions");
+                });
+
+            modelBuilder.Entity("SchoolERP.Domain.Entities.Parent", b =>
+                {
+                    b.Navigation("StudentRelations");
                 });
 
             modelBuilder.Entity("SchoolERP.Domain.Entities.ParentTeacherConversation", b =>

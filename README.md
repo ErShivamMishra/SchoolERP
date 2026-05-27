@@ -63,6 +63,7 @@ Important:
 - `POST /api/v1/auth/login` returns `accessToken`, `refreshToken`, token expirations, and user metadata.
 - Send protected requests with `Authorization: Bearer <accessToken>`.
 - `POST /api/v1/auth/refresh-token` rotates refresh tokens.
+- `POST /api/v1/auth/change-password` is required for temporary-password users before they can access normal protected APIs.
 - JWT includes:
   - `UserId`
   - `SchoolId` / `tenant_id`
@@ -106,6 +107,7 @@ Seeded modules:
 - `GalleryManagement`
 - `IdCardManagement`
 - `AdmitCardManagement`
+- `ParentPortalManagement`
 
 Permission model:
 
@@ -196,6 +198,9 @@ Day 4 APIs:
 - `Features/Communications`
 - `Features/Transport`
 - `Features/Gallery`
+- `Features/IdCards`
+- `Features/AdmitCards`
+- `Features/ParentPortal`
 
 Each feature contains:
 
@@ -207,6 +212,7 @@ Each feature contains:
 
 - `GlobalExceptionMiddleware`: standardized API errors
 - `SubscriptionValidationMiddleware`: tenant school-state validation plus module/permission enforcement
+- `ForcePasswordResetMiddleware`: blocks temporary-password users from business endpoints until password change is completed
 - `CurrentUserContext`: JWT-backed user/tenant context
 - `AccessControlService`: reusable module entitlement and permission evaluation
 - `AuditService`: audit logging for auth, school, staff, permission, and plan events
@@ -250,6 +256,18 @@ Each feature contains:
   - albums
   - photo/video uploads
   - tenant-isolated media storage
+- ID Cards:
+  - versioned template records
+  - student and teacher print-ready card payload generation
+  - QR/barcode metadata-ready snapshots
+- Admit Cards:
+  - versioned template records
+  - exam-scoped student admit card generation
+  - seat/room/instructions metadata
+- Parent Portal:
+  - parent user provisioning linked to the single `User` authentication model
+  - parent-student relation management
+  - read-only self-service APIs for attendance, fees, results, homework, and notices
 - Dashboard / Reporting:
   - summary cards
   - monthly chart-ready analytics
@@ -261,6 +279,7 @@ Each feature contains:
 - Standard response examples are added globally.
 - Authorization notes are included in endpoint descriptions.
 - Module-protected endpoints carry module/permission metadata for frontend-friendly discovery.
+- Auth endpoints now have rate limiting policies for login, refresh-token, and change-password.
 
 ## API Reference
 

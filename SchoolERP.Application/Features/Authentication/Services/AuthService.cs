@@ -15,8 +15,10 @@ public sealed class AuthService(
     IJwtTokenService jwtTokenService,
     IPasswordHasher passwordHasher,
     IAuditService auditService,
+    ICurrentUserContext currentUserContext,
     IValidator<LoginRequestDto> loginValidator,
     IValidator<RefreshTokenRequestDto> refreshTokenValidator,
+    IValidator<ChangePasswordRequestDto> changePasswordValidator,
     IAuthPolicyProvider authPolicyProvider) : IAuthService
 {
     public async Task<AuthResponseDto> LoginAsync(LoginRequestDto request, string? ipAddress, CancellationToken cancellationToken)
@@ -90,6 +92,41 @@ public sealed class AuthService(
 
         await auditService.WriteAsync("Authentication", "TokenRefreshed", nameof(User), persistedToken.User.Id.ToString(), "Success", $"Role: {persistedToken.User.Role!.Name}", persistedToken.User.SchoolId, persistedToken.User.Id, cancellationToken);
 
+        return response;
+    }
+
+    public async Task<AuthResponseDto> ChangePasswordAsync(ChangePasswordRequestDto request, string? ipAddress, CancellationToken cancellationToken)
+    {
+        await changePasswordValidator.ValidateAndThrowAsync(request, cancellationToken);
+        if (!currentUserContext.UserId.HasValue)
+        {
+            throw new UnauthorizedException("Authentication is required.", "authentication_required");
+        }
+
+        var user = await authRepository.GetUserByIdAsync(currentUserContext.UserId.Value, cancellationToken)
+            ?? throw new UnauthorizedException("User account not found.", "user_not_found");
+
+        EnsureUserHasRole(user);
+
+        if (!user.IsActive)
+        {
+            throw new ForbiddenException("User account is inactive.", "user_inactive");
+        }
+
+        if (!passwordHasher.VerifyPassword(user.PasswordHash, request.CurrentPassword))
+        {
+            await auditService.WriteAsync("Authentication", "PasswordChangeFailed", nameof(User), user.Id.ToString(), "Denied", "Current password verification failed.", user.SchoolId, user.Id, cancellationToken);
+            throw new UnauthorizedException("Current password is invalid.", "invalid_current_password");
+        }
+
+        user.PasswordHash = passwordHasher.HashPassword(request.NewPassword);
+        user.RequiresPasswordReset = false;
+        user.FailedLoginAttempts = 0;
+        user.LockoutEndUtc = null;
+        user.LastLoginAtUtc = DateTime.UtcNow;
+
+        var response = await IssueTokensAsync(user, ipAddress, cancellationToken);
+        await auditService.WriteAsync("Authentication", "PasswordChanged", nameof(User), user.Id.ToString(), "Success", "Password changed successfully.", user.SchoolId, user.Id, cancellationToken);
         return response;
     }
 
